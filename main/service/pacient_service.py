@@ -6,6 +6,8 @@ from ..model.Pacient import Pacient
 from ..db.DB import Database
 from ..tools.json_encoder import JSONEncoder
 
+import re
+
 class PacientService:
 
     def __init__(self):
@@ -76,5 +78,18 @@ class PacientService:
                 }
             )
             return True
+        except:
+            return False
+
+    def search_pacient(self, name, pag):
+        page = (int(pag)-1)*3
+        pacients = []
+        regx = re.compile(name, re.IGNORECASE)
+        try:
+            cursor = self.documento.find({'nombre':regx}).skip(page).limit(3)
+            for doc in cursor:
+                doc['_id'] = JSONEncoder().encode(doc['_id'])
+                pacients.append(doc)
+            return pacients
         except:
             return False

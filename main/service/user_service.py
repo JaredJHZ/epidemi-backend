@@ -6,6 +6,7 @@ from ..model.User import User
 from ..db.DB import Database
 from ..tools.json_encoder import JSONEncoder 
 
+import re
 
 class UserService:
 
@@ -57,4 +58,17 @@ class UserService:
             return usuario
         except pymongo.errors.CollectionInvalid as e: 
             print(e)
+            return False
+
+    def search_user(self, name, pag):
+        page = (int(pag)-1)*3
+        users = []
+        regx = re.compile(name, re.IGNORECASE)
+        try:
+            cursor = self.documento.find({'nombre':regx}).skip(page).limit(3)
+            for doc in cursor:
+                doc['_id'] = JSONEncoder().encode(doc['_id'])
+                users.append(doc)
+            return users
+        except:
             return False

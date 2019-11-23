@@ -5,6 +5,7 @@ import pymongo
 from ..model.Case import Case
 from ..db.DB import Database
 from ..tools.json_encoder import JSONEncoder 
+import re
 
 class CaseService:
 
@@ -33,7 +34,7 @@ class CaseService:
     
     def get_cases_pagination(self,pag):
         cases = []
-        cursor = self.documento.find({}).skip(int(pag)*8).limit(8)
+        cursor = self.documento.find({}).skip(int(pag)*5).limit(5)
         for doc in cursor:
             doc['_id'] = JSONEncoder().encode(doc['_id'])
             cases.append(doc)
@@ -79,3 +80,28 @@ class CaseService:
         except:
             return False
 
+    def search_case(self, paciente, pag):
+        page = (int(pag)-1)*3
+        cases = []
+        regx = re.compile(paciente, re.IGNORECASE)
+        try:
+            cursor = self.documento.find({'numero_expediente':regx}).skip(page).limit(3)
+            for doc in cursor:
+                doc['_id'] = JSONEncoder().encode(doc['_id'])
+                cases.append(doc)
+            return cases
+        except:
+            return False
+    
+    def search_case_by_name(self, paciente, pag):
+        page = (int(pag)-1)*3
+        cases = []
+        regx = re.compile(paciente, re.IGNORECASE)
+        try:
+            cursor = self.documento.find({'nombre_paciente':regx}).skip(page).limit(3)
+            for doc in cursor:
+                doc['_id'] = JSONEncoder().encode(doc['_id'])
+                cases.append(doc)
+            return cases
+        except:
+            return False

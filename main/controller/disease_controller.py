@@ -6,6 +6,7 @@ from ..service.disease_service import DiseaseService
 from ..db.DB import Database
 from ..tools.json_encoder import JSONEncoder
 
+
 disease_service = DiseaseService()
 
 def create_disease_object(req):
@@ -105,5 +106,22 @@ class AllDiseasesController(Resource):
                 "mensaje":"error en el servidor"
             }
     
+    def options(self):
+        pass
+
+class SearchDiseaseController(Resource):
+
+    def post(self,pag):
+        info = request.get_json(force= True)
+        nombre_enfermedad = info['nombre_enfermedad']
+        diseases = disease_service.search_disease(nombre_enfermedad,pag)
+        if diseases:
+            return {
+                "diseases": diseases
+            }, 201
+        else:
+            return {
+                "mensaje": "error en el servidor"
+            }, 404
     def options(self):
         pass

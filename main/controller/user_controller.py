@@ -96,3 +96,21 @@ class UserControllerParameter(Resource):
 
     def options(self,id):
         pass
+
+class SearchUserController(Resource):
+
+    def post(self,pag):
+        info = request.get_json(force= True)
+        nombre = info['nombre']
+        users = user_service.search_user(nombre,pag)
+        if users:
+            return {
+                "users": users
+            }, 201
+        else:
+            return {
+                "mensaje": "error en el servidor"
+            }, 404
+    def options(self):
+        pass
+

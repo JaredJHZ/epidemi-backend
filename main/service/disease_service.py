@@ -1,6 +1,8 @@
 import json
 from bson import ObjectId
 import pymongo
+import bson
+import re
 
 from ..model.Disease import Disease
 from ..db.DB import Database
@@ -76,6 +78,20 @@ class DiseaseService:
                 }
             )
             return True
+        except:
+            return False
+
+    def search_disease(self, name, pag):
+        page = (int(pag)-1)*3
+        print(page)
+        diseases = []
+        regx = re.compile(name, re.IGNORECASE)
+        try:
+            cursor = self.documento.find({'nombre_enfermedad':regx}).skip(page).limit(3)
+            for doc in cursor:
+                doc['_id'] = JSONEncoder().encode(doc['_id'])
+                diseases.append(doc)
+            return diseases
         except:
             return False
 

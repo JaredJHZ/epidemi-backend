@@ -6,16 +6,19 @@ from ..service.case_service import CaseService
 from ..db.DB import Database
 from ..tools.json_encoder import JSONEncoder
 
+from ..service.pacient_service import PacientService
+
 case_service = CaseService()
 
 def create_case_object(req):
     info = req.get_json(force= True)
-    paciente = info['paciente']
+    expediente = info['numero_expediente']
+    paciente = info['nombre_paciente']
     enfermedad = info['enfermedad']
     mes = info['mes']
     year = info['year']
     resultado = info['resultado']
-    return Case(paciente, enfermedad, mes, year, resultado)
+    return Case(expediente, enfermedad, mes, year, resultado, paciente)
 
 class CaseController(Resource):
 
@@ -108,5 +111,39 @@ class AllCasesController(Resource):
                 "mensaje":"error en el servidor"
             }
     
+    def options(self):
+        pass
+
+
+class SearchCaseController(Resource):
+
+    def post(self,pag):
+        info = request.get_json(force= True)
+        paciente = info['paciente']
+        cases = case_service.search_case(paciente,pag)
+        if cases:
+            return {
+                "cases": cases
+            }, 201
+        else:
+            return {
+                "mensaje": "error en el servidor"
+            }, 404
+    def options(self):
+        pass
+
+class SearchCaseNameController(Resource):
+    def post(self,pag):
+        info = request.get_json(force= True)
+        paciente = info['nombre_paciente']
+        cases = case_service.search_case_by_name(paciente,pag)
+        if cases:
+            return {
+                "cases": cases
+            }, 201
+        else:
+            return {
+                "mensaje": "error en el servidor"
+            }, 404
     def options(self):
         pass

@@ -125,3 +125,21 @@ class AllPacientsController(Resource):
     
     def options(self):
         pass
+
+class SearchPacientController(Resource):
+
+    def post(self,pag):
+        info = request.get_json(force= True)
+        nombre = info['nombre_paciente']
+        print(nombre)
+        pacients = pacient_service.search_pacient(nombre,pag)
+        if pacients:
+            return {
+                "pacients": pacients
+            }, 201
+        else:
+            return {
+                "mensaje": "error en el servidor"
+            }, 404
+    def options(self):
+        pass
