@@ -27,7 +27,6 @@ class GraphicService:
                     datos["positivo"] += 1
                 else:
                     datos["negativo"] += 1
-
             return datos
         except:
             return False
